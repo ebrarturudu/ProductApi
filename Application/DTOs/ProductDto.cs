@@ -1,4 +1,4 @@
-namespace ProductApi.DTOs;
+namespace ProductApi.Application.DTOs;
 
 public class ProductDto
 {

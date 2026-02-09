@@ -1,4 +1,4 @@
-namespace ProductApi.Models;
+namespace ProductApi.Core.Entities;
 
 public class Product
 {

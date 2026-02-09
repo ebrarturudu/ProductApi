@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProductApi.Data;
-using ProductApi.Models;
-using ProductApi.DTOs;
+using ProductApi.Core.Entities;              
+using ProductApi.Application.DTOs;           
+using ProductApi.Infrastructure.Persistence; 
 
 namespace ProductApi.Controllers;
 
