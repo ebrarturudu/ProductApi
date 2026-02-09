@@ -55,14 +55,15 @@ Uygulama çalıştıktan sonra, API endpoint’lerini test etmek için tarayıc�
 
 http://localhost:5062/swagger
 Not: Port numarası ortamınıza göre farklılık gösterebilir. Terminal çıktısını kontrol ediniz.
+```
 
-📂 Proje Yapısı
-Controllers: API endpoint’lerini içerir
+## 📂 Proje Yapısı
+- **Controllers:** API endpoint’lerini içerir
 
-Models: Veritabanı entity tanımları
+- **Models:** Veritabanı entity tanımları
 
-DTOs: Veri transfer nesneleri
+- **DTOs:** Veri transfer nesneleri
 
-Data: DbContext ve veritabanı yapılandırmaları
+- **Data:** DbContext ve veritabanı yapılandırmaları
 
-Migrations: EF Core migration dosyaları
+- **Migrations:** EF Core migration dosyaları
