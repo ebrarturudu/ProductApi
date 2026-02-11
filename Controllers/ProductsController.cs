@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductApi.Core.Entities;              
 using ProductApi.Application.DTOs;           
 using ProductApi.Infrastructure.Persistence; 
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ProductApi.Controllers;
 
@@ -11,17 +12,38 @@ namespace ProductApi.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IDistributedCache _cache; 
 
-    public ProductsController(AppDbContext context)
+    public ProductsController(AppDbContext context, IDistributedCache cache)
     {
         _context = context;
+        _cache = cache;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+   [HttpGet]
+public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+{
+    string cacheKey = "productList";
+    
+    var cachedData = await _cache.GetStringAsync(cacheKey);
+    if (!string.IsNullOrEmpty(cachedData))
     {
-        return await _context.Products.ToListAsync();
+        var products = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(cachedData);
+        return Ok(products);
     }
+
+    var productsFromDb = await _context.Products.ToListAsync();
+
+    var serializedData = System.Text.Json.JsonSerializer.Serialize(productsFromDb);
+    var cacheOptions = new DistributedCacheEntryOptions
+    {
+        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) // 10 dakika sakla
+    };
+    
+    await _cache.SetStringAsync(cacheKey, serializedData, cacheOptions);
+
+    return Ok(productsFromDb);
+}
 
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct(ProductDto productDto)
@@ -35,6 +57,7 @@ public class ProductsController : ControllerBase
 
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
+        await _cache.RemoveAsync("productList"); 
 
         return Ok(product);
     }
@@ -59,6 +82,7 @@ public class ProductsController : ControllerBase
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
+        await _cache.RemoveAsync("productList");
 
         return NoContent(); 
     }
