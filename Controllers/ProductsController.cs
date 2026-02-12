@@ -6,6 +6,7 @@ using ProductApi.Infrastructure.Persistence;
 using Microsoft.Extensions.Caching.Distributed;
 using MediatR;
 using ProductApi.Application.Features.Products.Queries;
+using ProductApi.Application.Features.Products.Commands;
 
 namespace ProductApi.Controllers;
 
@@ -38,18 +39,8 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct(ProductDto productDto)
     {
-        var product = new Product
-        {
-            Name = productDto.Name,
-            Price = productDto.Price,
-            Stock = productDto.Stock
-        };
-
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        await _cache.RemoveAsync("productList"); 
-
-        return Ok(product);
+        var result = await _mediator.Send(new CreateProductCommand(productDto));
+        return Ok(result);
     }
     
     [HttpGet("{id}")]
