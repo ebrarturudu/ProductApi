@@ -4,6 +4,8 @@ using ProductApi.Core.Entities;
 using ProductApi.Application.DTOs;           
 using ProductApi.Infrastructure.Persistence; 
 using Microsoft.Extensions.Caching.Distributed;
+using MediatR;
+using ProductApi.Application.Features.Products.Queries;
 
 namespace ProductApi.Controllers;
 
@@ -13,37 +15,25 @@ public class ProductsController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IDistributedCache _cache; 
+    private readonly IMediator _mediator;
 
-    public ProductsController(AppDbContext context, IDistributedCache cache)
+    //public ProductsController(AppDbContext context, IDistributedCache cache)
+    //{
+      //  _context = context;
+      //  _cache = cache;
+    //}
+
+    public ProductsController(IMediator mediator)
     {
-        _context = context;
-        _cache = cache;
+        _mediator = mediator;
     }
 
    [HttpGet]
-public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-{
-    string cacheKey = "productList";
-    
-    var cachedData = await _cache.GetStringAsync(cacheKey);
-    if (!string.IsNullOrEmpty(cachedData))
+    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
-        var products = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(cachedData);
-        return Ok(products);
+    var products = await _mediator.Send(new GetProductsQuery());
+    return Ok(products);
     }
-
-    var productsFromDb = await _context.Products.ToListAsync();
-
-    var serializedData = System.Text.Json.JsonSerializer.Serialize(productsFromDb);
-    var cacheOptions = new DistributedCacheEntryOptions
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) // 10 dakika sakla
-    };
-    
-    await _cache.SetStringAsync(cacheKey, serializedData, cacheOptions);
-
-    return Ok(productsFromDb);
-}
 
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct(ProductDto productDto)
