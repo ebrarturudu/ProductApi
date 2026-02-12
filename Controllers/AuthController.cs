@@ -22,7 +22,8 @@ public class AuthController : ControllerBase
             _context = context;
             _configuration = configuration; 
         }
-    
+        
+    [AllowAnonymous] 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto request)
     {
@@ -35,17 +36,19 @@ public class AuthController : ControllerBase
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return Ok("Kullanıcı başarıyla oluşturuldu.");
+        return Ok("Kullanici basariyla olusturuldu.");
     }
+
+    [AllowAnonymous]
     [HttpPost("login")]
 public async Task<IActionResult> Login(LoginDto request)
 {
     var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
-    if (user == null) return BadRequest("Kullanıcı bulunamadı.");
+    if (user == null) return BadRequest("Kullanici bulunamadi.");
 
     if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
     {
-        return BadRequest("Hatalı şifre.");
+        return BadRequest("Hatali sifre.");
     }
 
     var token = CreateToken(user);

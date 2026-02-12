@@ -14,15 +14,7 @@ namespace ProductApi.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    private readonly IDistributedCache _cache; 
     private readonly IMediator _mediator;
-
-    //public ProductsController(AppDbContext context, IDistributedCache cache)
-    //{
-      //  _context = context;
-      //  _cache = cache;
-    //}
 
     public ProductsController(IMediator mediator)
     {
@@ -46,25 +38,15 @@ public class ProductsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
-
-        if (product == null)
-            return NotFound("Ürün bulunamadı!");
-
-        return Ok(product);
+        var product = await _mediator.Send(new GetProductByIdQuery(id));
+        return product != null ? Ok(product) : NotFound("Ürün bulunamadı.");
     }
 
-    [HttpDelete("{id}")]
+   [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null)
-            return NotFound("Silinecek ürün bulunamadı!");
-
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-        await _cache.RemoveAsync("productList");
-
+        var result = await _mediator.Send(new DeleteProductCommand(id));
+        if (!result) return NotFound("Silinecek ürün bulunamadı.");
         return NoContent(); 
     }
 }
