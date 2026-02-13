@@ -41,6 +41,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ProductApi.Application.Behaviors.ValidationBehavior<,>));
 
 var app = builder.Build();
+app.UseMiddleware<ProductApi.Infrastructure.ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
