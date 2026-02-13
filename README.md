@@ -38,18 +38,23 @@ Tüm servis trafiği merkezi bir Gateway üzerinden yönetilir.
 ## 💻 Kurulum ve Çalıştırma
 
 1. **Docker Servislerini Başlatın:**
-   ```bash
-   docker-compose up -d
-    ```
+ ```bash
+ docker-compose up -d
+  ```
 
-Veritabanı Migration:
-
+2. **Veritabanı Migration:**
+```bash
 dotnet ef database update --project ProductApi
-Uygulamayı Başlatın:
-Önce ProductApi ve AuthApi servislerini, ardından ApiGateway projesini çalıştırın:
+```
 
+3. **Uygulamayı Başlatın:**
+Önce `ProductApi` ve `AuthApi` servislerini, ardından `ApiGateway` projesini çalıştırın:
+```bash
 dotnet run --project ApiGateway
+```
 🧪 Test Adımları
-Doğrulama Testi: POST /api/Products endpoint'ine geçersiz veri (örn: fiyat -5) göndererek 400 Bad Request sonucunu doğrulayın.
+1. **Doğrulama Testi:** 
+`POST /api/Products` endpoint'ine geçersiz veri (örn: fiyat -5) göndererek `400 Bad Request` sonucunu doğrulayın.
 
-Sınır Testi: Gateway üzerinden art arda 10'dan fazla istek atarak Rate Limit mekanizmasını test edin.
+2. **Sınır Testi:**
+Gateway üzerinden art arda 10'dan fazla istek atarak Rate Limit mekanizmasını test edin.
