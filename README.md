@@ -48,9 +48,10 @@ Projeyi Çalıştırın:
 Bash
 dotnet run --project ProductApi
 🔐 Kimlik Doğrulama (Auth)
-/api/Auth/register ile kullanıcı oluşturun.
 
-/api/Auth/login ile token alın.
+`/api/Auth/register` ile kullanıcı oluşturun.
+
+`/api/Auth/login` ile token alın.
 
 
 📝 Versiyonlama
