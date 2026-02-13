@@ -30,3 +30,4 @@ C:\Users\ebrar\OneDrive\Desktop\ProjemKayra\ApiGateway\obj\Debug\net10.0\refint\
 C:\Users\ebrar\OneDrive\Desktop\ProjemKayra\ApiGateway\obj\Debug\net10.0\ApiGateway.pdb
 C:\Users\ebrar\OneDrive\Desktop\ProjemKayra\ApiGateway\obj\Debug\net10.0\ApiGateway.genruntimeconfig.cache
 C:\Users\ebrar\OneDrive\Desktop\ProjemKayra\ApiGateway\obj\Debug\net10.0\ref\ApiGateway.dll
+C:\Users\ebrar\OneDrive\Desktop\ProjemKayra\ApiGateway\obj\Debug\net10.0\ApiGateway.sourcelink.json
