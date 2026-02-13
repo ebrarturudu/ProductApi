@@ -1,68 +1,57 @@
-# Product Management API – Task 1
+# Product & Auth Management API (Task 2)
 
-Bu proje, modern yazılım geliştirme prensipleri ve katmanlı mimari yaklaşımı kullanılarak geliştirilmiş bir Ürün Yönetim API’sidir.  
-Proje kapsamında veritabanı yönetimi, asenkron programlama ve API dokümantasyonu standartları uygulanmıştır.
+Bu proje, modern yazılım mimarileri ve tasarım desenleri kullanılarak geliştirilmiş, JWT tabanlı kimlik doğrulama ve Redis önbellekleme mekanizmalarına sahip bir Ürün Yönetim API'sidir.
 
----
+## 🏗️ Mimari Yapı: Onion Architecture
+Projede bağımlılıkların merkeze (Core) doğru olduğu, katmanlı bir mimari uygulanmıştır:
+- **Core:** Entity'ler ve temel arayüzler.
+- **Application:** CQRS Handler'ları, DTO'lar ve iş mantığı (Business Logic).
+- **Infrastructure:** Veritabanı (EF Core, PostgreSQL) ve Önbellek (Redis) yapılandırmaları.
+- **API:** Controller'lar ve Middleware yönetimi.
 
-## 🛠️ Kullanılan Teknolojiler
+## 🚀 Kullanılan Teknolojiler & Desenler
+- **.NET 8 (Web API):** Ana framework.
+- **PostgreSQL:** İlişkisel veritabanı.
+- **Redis:** Dağıtık önbellekleme (Distributed Caching).
+- **MediatR (CQRS):** Komut ve sorguların (Command/Query) birbirinden ayrıştırılması.
+- **JWT Authentication:** Güvenli kimlik doğrulama.
+- **Entity Framework Core:** ORM aracı.
 
-- **Framework:** ASP.NET Core Web API (.NET)
-- **Veritabanı:** PostgreSQL (Docker konteyner üzerinde çalışmaktadır)
-- **ORM:** Entity Framework Core
-- **Dokümantasyon:** Swagger / OpenAPI
-- **Mimari:** Katmanlı Mimari (Models, DTOs, Controllers, Data)
+## ⚡ Caching Stratejisi
+- **Cache-Aside Pattern:** Ürün listeleme ve tekil ürün sorgularında önce Redis kontrol edilir.
+- **Cache Invalidation:** Yeni ürün eklendiğinde veya bir ürün silindiğinde, veritabanı ile önbelleğin tutarlılığını korumak adına ilgili cache anahtarları temizlenir.
 
----
 
-## 📌 Teknik Özellikler
 
-- **Asenkron Yapı:**  
-  Tüm veritabanı işlemleri `async/await` yapısı kullanılarak asenkron olarak gerçekleştirilmiştir.
+## 🛠️ Kurulum ve Çalıştırma
 
-- **DTO Kullanımı:**  
-  Veri transferi sırasında `ProductDto` kullanılarak model izolasyonu ve veri güvenliği sağlanmıştır.
+### Gereksinimler
+- .NET SDK (8.0+)
+- Docker (PostgreSQL ve Redis için önerilir)
 
-- **Migration Yönetimi:**  
-  Veritabanı şeması Entity Framework Core Migrations aracılığıyla yönetilmektedir.
+### Adımlar
+1. **Veritabanı ve Redis'i Ayağa Kaldırın:**
+   (Eğer Docker kullanıyorsanız)
+   ```bash
+   docker run --name postgres-db -e POSTGRES_PASSWORD=your_password -p 5432:5432 -d postgres
+   docker run --name redis-cache -p 6379:6379 -d redis
+Bağlantı Ayarlarını Güncelleyin:
+appsettings.json dosyasındaki ConnectionStrings ve Redis ayarlarının doğruluğundan emin olun.
 
-- **Bağımlılık Enjeksiyonu (Dependency Injection):**  
-  `DbContext` ve diğer bağımlılıklar, .NET’in yerleşik Dependency Injection yapısı ile yapılandırılmıştır.
+Veritabanını Oluşturun:
+Uygulama ilk çalıştığında EnsureCreated() ile tabloları otomatik oluşturacaktır. Manuel yapmak isterseniz:
 
----
+Bash
+dotnet ef database update
+Projeyi Çalıştırın:
 
-## 🚀 Kurulum ve Çalıştırma
+Bash
+dotnet run --project ProductApi
+🔐 Kimlik Doğrulama (Auth)
+/api/Auth/register ile kullanıcı oluşturun.
 
-### 1. Veritabanı Hazırlığı
+/api/Auth/login ile token alın.
 
-Docker üzerinde PostgreSQL servisinin çalıştığından emin olun.  
-`appsettings.json` dosyasında bulunan `ConnectionStrings` alanını kendi yerel ayarlarınıza göre düzenleyin.
 
----
-
-### 2. Uygulamayı Başlatma
-
-Proje klasöründe terminal açarak aşağıdaki komutları çalıştırın:
-
-```bash
-# Bağımlılıkları yükle
-dotnet restore
-
-# Uygulamayı çalıştır
-dotnet run
-3. API Testi (Swagger)
-Uygulama çalıştıktan sonra, API endpoint’lerini test etmek için tarayıcınızdan aşağıdaki adrese gidin:
-
-http://localhost:5062/swagger
-Not: Port numarası ortamınıza göre farklılık gösterebilir. Terminal çıktısını kontrol ediniz.
-
-📂 Proje Yapısı
-Controllers: API endpoint’lerini içerir
-
-Models: Veritabanı entity tanımları
-
-DTOs: Veri transfer nesneleri
-
-Data: DbContext ve veritabanı yapılandırmaları
-
-Migrations: EF Core migration dosyaları
+📝 Versiyonlama
+Bu proje test/v1.0.0 branch'i üzerinde geliştirilmiştir.
