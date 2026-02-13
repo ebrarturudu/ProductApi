@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "nrBNEzo4eQU=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ebrar\\OneDrive\\Desktop\\ProjemKayra\\ApiGateway\\ApiGateway.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ebrar\\.nuget\\packages\\system.io.hashing\\8.0.0\\system.io.hashing.8.0.0.nupkg.sha512",
+    "C:\\Users\\ebrar\\.nuget\\packages\\yarp.reverseproxy\\2.3.0\\yarp.reverseproxy.2.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}
