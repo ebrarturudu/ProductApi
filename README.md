@@ -1,60 +1,69 @@
-# Microservices Architecture & Gateway Implementation
+# Product & Auth Management API (Task 2)
 
-Bu proje, modern yazılım mimarisi prensipleriyle (Onion Architecture) geliştirilmiş; kimlik doğrulama, ürün yönetimi ve merkezi bir API Gateway yapısını içeren kapsamlı bir .NET ekosistemidir.
+Bu proje, modern yazılım mimarileri ve tasarım desenleri kullanılarak geliştirilmiş, JWT tabanlı kimlik doğrulama ve Redis önbellekleme mekanizmalarına sahip bir Ürün Yönetim API'sidir.
 
-## 🏗️ Mimari Yapı ve Katmanlar
-Proje, **Onion Architecture** üzerine inşa edilmiştir:
+## 🏗️ Mimari Yapı: Onion Architecture
+Projede bağımlılıkların merkeze (Core) doğru olduğu, katmanlı bir mimari uygulanmıştır:
 - **Core:** Entity'ler ve temel arayüzler.
-- **Application:** CQRS (MediatR), DTO'lar ve Validation kuralları.
-- **Infrastructure:** Veritabanı erişimi (EF Core), Redis Cache ve Middleware'ler.
-- **WebAPI:** Endpoint'ler ve servis kayıtları.
+- **Application:** CQRS Handler'ları, DTO'lar ve iş mantığı (Business Logic).
+- **Infrastructure:** Veritabanı (EF Core, PostgreSQL) ve Önbellek (Redis) yapılandırmaları.
+- **API:** Controller'lar ve Middleware yönetimi.
 
----
+## 🚀 Kullanılan Teknolojiler & Desenler
+- **.NET 8 (Web API):** Ana framework.
+- **PostgreSQL:** İlişkisel veritabanı.
+- **Redis:** Dağıtık önbellekleme (Distributed Caching).
+- **MediatR (CQRS):** Komut ve sorguların (Command/Query) birbirinden ayrıştırılması.
+- **JWT Authentication:** Güvenli kimlik doğrulama.
+- **Entity Framework Core:** ORM aracı.
 
-## 🚀 Öne Çıkan Özellikler
+## ⚡ Caching Stratejisi
+- **Cache-Aside Pattern:** Ürün listeleme ve tekil ürün sorgularında önce Redis kontrol edilir.
+- **Cache Invalidation:** Yeni ürün eklendiğinde veya bir ürün silindiğinde, veritabanı ile önbelleğin tutarlılığını korumak adına ilgili cache anahtarları temizlenir.
 
-### 1. API Gateway (YARP)
-Tüm servis trafiği merkezi bir Gateway üzerinden yönetilir. 
-- **Port:** `localhost:5000` üzerinden tüm API'lere erişim sağlanır.
-- **Reverse Proxy:** İstekleri ilgili mikroservislere yönlendirir.
+## 🔐 Güvenlik ve Kimlik Doğrulama (JWT)
 
-### 2. Güvenlik ve Hız Sınırı (Rate Limiting)
-- Gateway üzerinde **Fixed Window** politikası uygulanmıştır.
-- IP tabanlı olarak dakikada maksimum 10 isteğe izin verilir. Sınır aşıldığında `503 Service Unavailable` döner.
+Bu proje, katmanlar arası güvenliği sağlamak için **JWT (JSON Web Token)** tabanlı bir kimlik doğrulama mekanizması kullanır.
 
-### 3. Otomatik Doğrulama (Validation Pipeline)
-- **FluentValidation** kullanılarak giriş verileri denetlenir.
-- **MediatR Pipeline Behavior** sayesinde, veriler henüz Handler'a ulaşmadan otomatik olarak doğrulanır.
+### Nasıl Test Edilir?
+1. **Token Alın:** Öncelikle `AuthApi` üzerinden giriş yaparak bir JWT Token edinin.
+2. **Swagger Yetkilendirme:** `ProductApi` Swagger arayüzünde sağ üstte bulunan **"Authorize"** butonuna tıklayın.
+3. **Bearer Token:** Açılan pencereye kopyaladığınız token değerini yapıştırın.
+4. **Erişim:** Artık `[Authorize]` ile korunan ürün ekleme, silme ve listeleme işlemlerini gerçekleştirebilirsiniz. Yetkisiz istekler sistem tarafından **401 Unauthorized** kodu ile reddedilecektir.
 
-### 4. Merkezi Hata Yönetimi (Global Exception Handling)
-- Özel bir **Middleware** ile tüm sistem hataları yakalanır.
-- Kullanıcıya karmaşık hata ekranları yerine, standart ve anlaşılır JSON formatında (ErrorResponse) yanıt dönülür.
+> ## 📌 Note: 
+.NET 10 Preview sürümü kullanıldığı için OpenAPI yapılandırması `Microsoft.OpenApi.Models` üzerinden özelleştirilmiştir.
 
-### 5. Performans (Caching)
-- **Redis (Distributed Cache)** entegrasyonu ile sık erişilen veriler önbelleğe alınır.
+## 🛠️ Kurulum ve Çalıştırma
 
----
+### Gereksinimler
+- .NET SDK (8.0+)
+- Docker (PostgreSQL ve Redis için önerilir)
 
-## 💻 Kurulum ve Çalıştırma
+### Adımlar
+1. **Veritabanı ve Redis'i Ayağa Kaldırın:**
+   (Eğer Docker kullanıyorsanız)
+   ```bash
+   docker run --name postgres-db -e POSTGRES_PASSWORD=your_password -p 5432:5432 -d postgres
+   docker run --name redis-cache -p 6379:6379 -d redis
+Bağlantı Ayarlarını Güncelleyin:
+appsettings.json dosyasındaki ConnectionStrings ve Redis ayarlarının doğruluğundan emin olun.
 
-1. **Docker Servislerini Başlatın:**
- ```bash
- docker-compose up -d
-  ```
+Veritabanını Oluşturun:
+Uygulama ilk çalıştığında EnsureCreated() ile tabloları otomatik oluşturacaktır. Manuel yapmak isterseniz:
 
-2. **Veritabanı Migration:**
-```bash
-dotnet ef database update --project ProductApi
-```
+Bash
+dotnet ef database update
+Projeyi Çalıştırın:
 
-3. **Uygulamayı Başlatın:**
-Önce `ProductApi` ve `AuthApi` servislerini, ardından `ApiGateway` projesini çalıştırın:
-```bash
-dotnet run --project ApiGateway
-```
-🧪 Test Adımları
-1. **Doğrulama Testi:** 
-`POST /api/Products` endpoint'ine geçersiz veri (örn: fiyat -5) göndererek `400 Bad Request` sonucunu doğrulayın.
+Bash
+dotnet run --project ProductApi
+🔐 Kimlik Doğrulama (Auth)
 
-2. **Sınır Testi:**
-Gateway üzerinden art arda 10'dan fazla istek atarak Rate Limit mekanizmasını test edin.
+`/api/Auth/register` ile kullanıcı oluşturun.
+
+`/api/Auth/login` ile token alın.
+
+
+📝 Versiyonlama
+Bu proje test/v1.0.0 branch'i üzerinde geliştirilmiştir.
