@@ -7,11 +7,13 @@ using Microsoft.Extensions.Caching.Distributed;
 using MediatR;
 using ProductApi.Application.Features.Products.Queries;
 using ProductApi.Application.Features.Products.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProductApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;
