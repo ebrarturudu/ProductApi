@@ -8,6 +8,7 @@ Projede bağımlılıkların merkeze (Core) doğru olduğu, katmanlı bir mimari
 - **Application:** CQRS Handler'ları, DTO'lar ve iş mantığı (Business Logic).
 - **Infrastructure:** Veritabanı (EF Core, PostgreSQL) ve Önbellek (Redis) yapılandırmaları.
 - **API:** Controller'lar ve Middleware yönetimi.
+- **SOLID & 12-Factor Compliance:** Proje, taşınabilirlik ve ölçeklenebilirlik için "12-Factor App" metodolojisine uygun, stateless ve konfigürasyon odaklı tasarlanmıştır.
 
 ## 🚀 Kullanılan Teknolojiler & Desenler
 - **.NET 8 (Web API):** Ana framework.
@@ -16,6 +17,7 @@ Projede bağımlılıkların merkeze (Core) doğru olduğu, katmanlı bir mimari
 - **MediatR (CQRS):** Komut ve sorguların (Command/Query) birbirinden ayrıştırılması.
 - **JWT Authentication:** Güvenli kimlik doğrulama.
 - **Entity Framework Core:** ORM aracı.
+- **Serilog (Structured Logging):** Uygulama logları, 12-Factor standartlarına uygun şekilde JSON formatında console üzerinden izlenebilir hale getirilmiştir.
 
 ## ⚡ Caching Stratejisi
 - **Cache-Aside Pattern:** Ürün listeleme ve tekil ürün sorgularında önce Redis kontrol edilir.
@@ -31,7 +33,7 @@ Bu proje, katmanlar arası güvenliği sağlamak için **JWT (JSON Web Token)** 
 3. **Bearer Token:** Açılan pencereye kopyaladığınız token değerini yapıştırın.
 4. **Erişim:** Artık `[Authorize]` ile korunan ürün ekleme, silme ve listeleme işlemlerini gerçekleştirebilirsiniz. Yetkisiz istekler sistem tarafından **401 Unauthorized** kodu ile reddedilecektir.
 
-> ## 📌 Note: 
+## 📌 Not: 
 .NET 10 Preview sürümü kullanıldığı için OpenAPI yapılandırması `Microsoft.OpenApi.Models` üzerinden özelleştirilmiştir.
 
 ## 🛠️ Kurulum ve Çalıştırma
@@ -66,7 +68,9 @@ dotnet run --project ProductApi
 
 `/api/Auth/login` ile token alın.
 
+> [!NOTE]
+**Logging:** Uygulama çalıştığında terminalde `Structured JSON Logs` çıktılarını görebilirsiniz; bu yapı merkezi log yönetim sistemleri (ELK, Seq vb.) ile entegrasyona hazır haldedir.
 
 ### 📝 Versiyonlama
 
-Bu proje `test/v1.0.0` branch'i üzerinde geliştirilmiştir.
+Proje `test/v1.0.0` branch'i üzerinde geliştirilmiş ve test süreçleri tamamlandıktan sonra `prod/v1.0.0` branch'ine merge edilerek production sürümü oluşturulmuştur.
