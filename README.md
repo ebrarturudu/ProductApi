@@ -1,4 +1,4 @@
-# Product & Auth Management API (Task 2)
+# Product & Auth Management API 
 
 Bu proje, modern yazılım mimarileri ve tasarım desenleri kullanılarak geliştirilmiş, JWT tabanlı kimlik doğrulama ve Redis önbellekleme mekanizmalarına sahip bir Ürün Yönetim API'sidir.
 
@@ -46,24 +46,27 @@ Bu proje, katmanlar arası güvenliği sağlamak için **JWT (JSON Web Token)** 
    ```bash
    docker run --name postgres-db -e POSTGRES_PASSWORD=your_password -p 5432:5432 -d postgres
    docker run --name redis-cache -p 6379:6379 -d redis
-Bağlantı Ayarlarını Güncelleyin:
-appsettings.json dosyasındaki ConnectionStrings ve Redis ayarlarının doğruluğundan emin olun.
+**Bağlantı Ayarlarını Güncelleyin:**
+`appsettings.json` dosyasındaki `ConnectionStrings` ve `Redis` ayarlarının doğruluğundan emin olun.
 
-Veritabanını Oluşturun:
-Uygulama ilk çalıştığında EnsureCreated() ile tabloları otomatik oluşturacaktır. Manuel yapmak isterseniz:
+**Veritabanını Oluşturun:**
+Uygulama ilk çalıştığında `EnsureCreated()` ile tabloları otomatik oluşturacaktır. Manuel yapmak isterseniz:
 
-Bash
+```Bash
 dotnet ef database update
+```
 Projeyi Çalıştırın:
 
-Bash
+```Bash
 dotnet run --project ProductApi
-🔐 Kimlik Doğrulama (Auth)
+```
+### 🔐 Kimlik Doğrulama (Auth)
 
 `/api/Auth/register` ile kullanıcı oluşturun.
 
 `/api/Auth/login` ile token alın.
 
 
-📝 Versiyonlama
-Bu proje test/v1.0.0 branch'i üzerinde geliştirilmiştir.
+### 📝 Versiyonlama
+
+Bu proje `test/v1.0.0` branch'i üzerinde geliştirilmiştir.
