@@ -11,7 +11,7 @@ using Serilog;
 using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// Hatalarrın JSON formatında loglanması sağlanmaktadır. 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(new CompactJsonFormatter())
     .CreateLogger();

@@ -8,7 +8,8 @@ namespace ProductApi.Infrastructure;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-
+// Task 3: Global Exception Handling Middleware. 
+//  Hata yönetimi standartlaştırılmış ve kullanıcıya tutarlı hata mesajları dönülmesi sağlanmıştır.
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;

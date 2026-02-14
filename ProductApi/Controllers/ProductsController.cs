@@ -11,11 +11,15 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ProductApi.Controllers;
 
+// Task 1: Onion Architecture yapısı uygulanmıştır. Bağımlılıklar içe doğrudur.
+// Task 3: 12-Factor App prensiplerine uygun olarak Structured Logging (Serilog) entegre edilmiştir.
+
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
 public class ProductsController : ControllerBase
 {
+   // Task 2: CQRS deseni MediatR ile uygulanarak okunabilirlik ve test edilebilirlik artırılmıştır.
     private readonly IMediator _mediator;
 
     public ProductsController(IMediator mediator)
